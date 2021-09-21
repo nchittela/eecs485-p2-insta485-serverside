@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap" rel="stylesheet">
+    <title>insta485</title>
+  </head>
+  <body>
+
+    <header>
+      <div>
+        <div class = "headerSection">
+          <p><a href = "/"> <img id = "instalogo" src = "/images/instaLogo.png" alt = "Instagram Icon"></a></p>
+          <p><a href = "/">Insta485 </a></p>
+        </div>
+        <div class = "headerSection2">
+          <p><a href = "/explore/"> explore </a><a href = "/u/{{logname}}/"> | {{logname}} </a></p>
+        </div>
+      </div>
+    </header>
+
+    <h1> {{username}} </h1>
+
+    {% if username == logname %}
+        
+    {% elif logname_follows_username %}
+        <p class="text">following</p>
+    {% else %}
+        <p class="text">not following</p>
+    {% endif %}
+
+    {% if total_posts == 1 %}
+        <p class="text">{{total_posts}} post </p>
+    {% else %}
+        <p class="text">{{total_posts}} posts </p>
+    {% endif %}
+
+    {% if followers == 1 %}
+        <p class="text"><a href = "/u/{{username}}/followers/">{{followers}} follower</a> </p>
+    {% else %}
+        <p class="text"><a href = "/u/{{username}}/followers/">{{followers}} followers</a> </p>
+    {% endif %}
+
+    <p class="text"><a href = "/u/{{username}}/following/">{{following}} following</a> </p>
+
+    <p class="text">{{fullname}}</p>
+
+    {% for post in posts %}
+        <a href = "/p/{{post.postid}}/"><img src = "{{post.img_url}}" alt = "post pic"></a>
+    {% endfor %}
+
+  </body>
+</html>

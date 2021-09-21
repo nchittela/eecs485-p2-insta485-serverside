@@ -1,0 +1,86 @@
+
+body {
+  width: 50%;
+}
+
+header {
+  margin: 2rem 2rem;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.text {
+  font-family: 'Open Sans', sans-serif;
+  margin-left: 1rem;
+}
+
+header ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: black solid 0.2rem;
+}
+
+.headerSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 28%;
+  justify-content: space-around;
+  font-family: 'Courgette', cursive;
+  font-size: 2rem;
+}
+
+.headerSection2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 30%;
+  justify-content: space-around;
+  font-family: 'Courgette', cursive;
+  font-size: 1.5rem;
+}
+
+li {
+  color: black;
+}
+
+#instalogo {
+  width: 3rem;
+  height: 3rem;
+}
+
+.postCard {
+  border: 0.2rem solid black;
+  margin: 2rem 3rem;
+}
+
+.postHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 1rem;
+}
+
+.user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.profilePic {
+  width: 5rem;
+  height: 5rem;
+  margin-right: 0.5rem;
+}
+
+.postPic {
+  width: 100%;
+}

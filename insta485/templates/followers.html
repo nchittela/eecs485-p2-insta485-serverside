@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap" rel="stylesheet">
+    <title>insta485</title>
+  </head>
+  <body>
+
+    <header>
+      <div>
+        <div class = "headerSection">
+          <p><a href = "/"> <img id = "instalogo" src = "/images/instaLogo.png" alt = "Instagram Icon"></a></p>
+          <p><a href = "/">Insta485 </a></p>
+        </div>
+        <div class = "headerSection2">
+          <p><a href = "/explore/"> explore </a><a href = "/u/{{logname}}/"> | {{logname}} </a></p>
+        </div>
+      </div>
+    </header>
+
+    {% for follower in followers %}
+        <div class = "follower_box">
+            <div>
+                <img class = "profilePic" src = "{{follower.user_img_url}}" alt = "follower profile pic">
+                <p class = "text"><a href = "/u/{{follower.username}}/">{{follower.username}}</a></p>
+            </div>
+            {% if follower.username == logname %}
+
+            {% elif follower.logname_follows_username %}
+                <p class="text">following</p>
+            {% else %}
+                <p class="text">not following</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+</body>
+</html>

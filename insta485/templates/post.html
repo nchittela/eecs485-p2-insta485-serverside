@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap"
+        rel="stylesheet">
+    <title>insta485</title>
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <div class="headerSection">
+                <p><a href="/"> <img id="instalogo" src="/images/instaLogo.png" alt="Instagram Icon"></a></p>
+                <p><a href="/">Insta485 </a></p>
+            </div>
+            <div class="headerSection2">
+                <p><a href="/explore/"> explore </a><a href="/u/{{logname}}/"> {{logname}}</a></p>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="postCard">
+        <div class="postHeader">
+            <div class="user text">
+                <a href="/u/{{owner}}/"><img class="profilePic" src="{{owner_img_url}}"
+                        alt="{{owner}} profile pic"> </a>
+                <a href="/u/{{owner}}/">
+                    <p> {{owner}} </p>
+                </a>
+            </div>
+            <p class="text"><a href="/p/{{postid}}/"> {{timestamp}} </a></p>
+        </div>
+        <img class="postPic" src="{{img_url}}" alt="post image">
+
+        {% if likes == 1 %}
+            <p class="text">{{likes}} like </p>
+        {% else %}
+            <p class="text">{{likes}} likes </p>
+        {% endif %}
+
+        {% for comment in comments %}
+            <p class="text"> <b><a href="/u/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>

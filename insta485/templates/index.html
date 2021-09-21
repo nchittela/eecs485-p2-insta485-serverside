@@ -1,9 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap"
+        rel="stylesheet">
+    <title>insta485</title>
+</head>
+
 <body>
-  <h1>Users</h1>
-  {% for user in users %}
-  <p>{{user.username}} {{user.fullname}}</p>
-  {% endfor %}
+
+    <header>
+        <div>
+            <div class="headerSection">
+                <p><a href="/"> <img id="instalogo" src="/images/instaLogo.png" alt="Instagram Icon"></a></p>
+                <p><a href="/">Insta485 </a></p>
+            </div>
+            <div class="headerSection2">
+                <p><a href="/explore/"> explore </a><a href="/u/{{logname}}/"> {{logname}}</a></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loop through all posts and out posts -->
+    {% for post in posts %}
+    <div class="postCard">
+        <div class="postHeader">
+            <div class="user text">
+                <a href="/u/{{post.owner}}/"><img class="profilePic" src="{{post.owner_img_url}}"
+                        alt="{{post.owner}} profile pic"> </a>
+                <a href="/u/{{post.owner}}/">
+                    <p> {{post.owner}} </p>
+                </a>
+            </div>
+            <p class="text"><a href="/p/{{post.postid}}/"> {{post.timestamp}} </a></p>
+        </div>
+        <img class="postPic" src="{{post.img_url}}" alt="post image">
+
+        {% if post.likes == 1 %}
+            <p class="text">{{post.likes}} like </p>
+        {% else %}
+            <p class="text">{{post.likes}} likes </p>
+        {% endif %}
+
+        {% for comment in post.comments %}
+            <p class="text"> <b><a href="/u/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+<!-- 
+
+
+
+
+
+
+    <div class="postCard">
+        <div class="postHeader">
+            <div class="user text">
+                <a href="/u/awdeorio/"><img class="profilePic"
+                        src="/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg" alt="awdeorio profile pic"> </a>
+                <a href="/u/awdeorio/">
+                    <p> awdeorio </p>
+                </a>
+            </div>
+            <p class="text"><a href="/p/3/"> 10 minutes ago </a></p>
+        </div>
+        <img class="postPic" src="/uploads/9887e06812ef434d291e4936417d125cd594b38a.jpg" alt="chickens">
+        <p class="text"> 1 like </p>
+        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> #chickensofinstagram </p>
+        <p class="text"> <b><a href="/u/jflinn/">jflinn </a></b>I &lt;3 chickens </p>
+        <p class="text"> <b><a href="/u/michjc/">michjc</a></b> Cute overload! </p>
+    </div>
+
+    <div class="postCard">
+        <div class="postHeader">
+            <div class="user text">
+                <a href="/u/jflinn/"><img class="profilePic" src="/uploads/505083b8b56c97429a728b68f31b0b2a089e5113.jpg"
+                        alt="jflinn profile picture"> </a>
+                <a href="/u/jflinn/">
+                    <p> jflinn </p>
+                </a>
+            </div>
+            <p class="text"><a href="/p/2/"> 4 hours ago </a></p>
+        </div>
+        <img class="postPic" src="/uploads/ad7790405c539894d25ab8dcf0b79eed3341e109.jpg" alt="crossword pic">
+        <p class="text"> 2 likes </p>
+        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> Sick #crossword</p>
+    </div>
+
+    <div class="postCard">
+        <div class="postHeader">
+            <div class="user text">
+                <a href="/u/awdeorio/"><img class="profilePic"
+                        src="/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg" alt="awdeorio profile pic"> </a>
+                <a href="/u/awdeorio/">
+                    <p> awdeorio </p>
+                </a>
+            </div>
+            <p class="text"><a href="/p/1/"> a day ago </a></p>
+        </div>
+        <img class="postPic" src="/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg" alt="chickens on a plank">
+        <p class="text"> 3 likes </p>
+        <p class="text"> <b><a href="/u/jflinn/">jflinn </a></b> Walking the plank #chickensofinstagram </p>
+        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> This was after trying to teach them to do a
+            #crossword </p>
+    </div> -->
+
 </body>
+
 </html>
