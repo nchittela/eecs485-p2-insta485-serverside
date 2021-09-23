@@ -8,11 +8,10 @@ import flask
 import insta485
 
 
-@insta485.app.route('/<user_url_slug>/following/', methods=['GET', 'POST'])
+@insta485.app.route('/<user_url_slug>/following/')
 def show_following(user_url_slug):
     if 'username' in flask.session:
         loggedIn = flask.session['username']
-        print(user_url_slug)
         # Connect to database
         connection = insta485.model.get_db()
 
@@ -51,9 +50,6 @@ def show_following(user_url_slug):
         for profile in result:
             userFollowing += [profile["username2"]]
 
-
-        print(userFollowing)
-
         context = {"following":following,
                     "userFollowing": userFollowing,
                     "logname":loggedIn,
@@ -64,26 +60,70 @@ def show_following(user_url_slug):
         context = {"following":[{"username":"Nobody"}]}
         return flask.render_template("following.html", **context)
 
+@insta485.app.route('/<user_url_slug>/followers/')
+def show_followers(user_url_slug):
+    if 'username' in flask.session:
+        loggedIn = flask.session['username']
+        # Connect to database
+        connection = insta485.model.get_db()
+
+        # Query database for people following users user_url_slug
+        cur = connection.execute(
+            "SELECT username1 "
+            "FROM following "
+            "WHERE username2 = ?",
+            (user_url_slug,)
+        )
+        result = cur.fetchall()
+
+        # get detailed profile of people following user_url_slug
+        followers = []
+        for profile in result:
+            cur = connection.execute(
+                "SELECT username, filename "
+                "FROM users "
+                "WHERE username = ?",
+                (profile["username1"],)
+            )
+            result = cur.fetchall()
+            followers += result
+
+        # Query database for anyone following user
+        userFollowing = []
+        cur = connection.execute(
+            "SELECT username2 "
+            "FROM following "
+            "WHERE username1 = ?",
+            (loggedIn,)
+        )
+        result = cur.fetchall()
+
+        for profile in result:
+            userFollowing += [profile["username2"]]
+
+        context = {"followers":followers,
+                    "userFollowing": userFollowing,
+                    "logname":loggedIn,
+                    "currentPageUser":user_url_slug
+                    }                    
+        return flask.render_template("followers.html", **context)
+    else:
+        context = {"following":[{"username":"Nobody"}]}
+        return flask.render_template("following.html", **context)
+
 @insta485.app.route('/following/', methods=['POST'])
 def handle_following():
     if 'username' in flask.session:
         if flask.request.form['operation'] == 'unfollow':
-            print("unfollowing " + flask.request.args.get('target'))
-
             connection = insta485.model.get_db()
             cur = connection.execute(
                 "DELETE FROM following "
                 "WHERE username1 = ? AND username2 = ?",
                 (flask.session['username'], flask.request.form['username'],)
             )
-            print(flask.session['username'])
-            print(flask.request.form['username'] +"a")
-            print(flask.request.form['unfollow'])
-            print(flask.request.form['operation'])
-            
+
             return flask.redirect(flask.request.args.get('target'))
         else:
-            print("following person")
             connection = insta485.model.get_db()
             cur = connection.execute(
                 "INSERT INTO following (username1, username2) VALUES(?, ?)",
@@ -92,3 +132,4 @@ def handle_following():
             return flask.redirect(flask.request.args.get('target'))
     else:
         print("Not signed in")
+        

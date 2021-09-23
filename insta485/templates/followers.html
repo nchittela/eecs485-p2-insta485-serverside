@@ -21,18 +21,28 @@
       </div>
     </header>
 
+    <h2>Followers</h2>
     {% for follower in followers %}
         <div class = "follower_box">
             <div>
-                <img class = "profilePic" src = "{{follower.user_img_url}}" alt = "follower profile pic">
-                <p class = "text"><a href = "/u/{{follower.username}}/">{{follower.username}}</a></p>
+                <img class = "profilePic" src = "{{follower.filename}}" alt = "follower profile pic">
+                <p class = "text"><a href = "/{{follower.username}}/">{{follower.username}}</a></p>
             </div>
             {% if follower.username == logname %}
 
-            {% elif follower.logname_follows_username %}
+            {% elif follower.username in userFollowing %}
                 <p class="text">following</p>
+                <form action="/following/?target=/{{currentPageUser}}/followers/" method="post" enctype="multipart/form-data">
+                  <input type="submit" name="unfollow" value="unfollow"/>
+                  <input type="hidden" name="username" value="{{follower.username}}"/>
+                  <input type="hidden" name="operation" value="unfollow"/>
+                </form>
             {% else %}
                 <p class="text">not following</p>
+                <form action="/following/?target=/{{currentPageUser}}/followers/" method="post" enctype="multipart/form-data">
+                  <input type="submit" name="follow" value="follow"/>
+                  <input type="hidden" name="username" value="{{follower.username}}"/>
+                  <input type="hidden" name="operation" value="follow"/>
             {% endif %}
         </div>
     {% endfor %}
