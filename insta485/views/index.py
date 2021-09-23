@@ -6,7 +6,7 @@ URLs include:
 """
 import flask
 import insta485
-
+app = flask.Flask(__name__)
 
 @insta485.app.route('/')
 def show_index():
@@ -17,11 +17,33 @@ def show_index():
 
     # Query database
     cur = connection.execute(
-        "SELECT username, fullname "
-        "FROM users"
+        "SELECT * FROM posts"
+        "SELECT * FROM comments" 
     )
-    users = cur.fetchall()
+    posts = cur.fetchall()
 
     # Add database info to context
-    context = {"users": users}
+    context = {"posts": posts}
     return flask.render_template("index.html", **context)
+
+@insta485.app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if flask.request.method == 'POST':
+        print("DEBUG", flask.request.form['username'])
+        flask.session['username'] = flask.request.form['username']
+        return flask.redirect(flask.url_for('index'))
+    return '''
+    <form action="" method="post">
+      <p><input type=text name=username>
+      <p><input type=submit value=Login>
+    </form>'''
+
+
+@insta485.app.route('/logout/')
+def logout():
+    flask.session.clear()
+    return flask.redirect(flask.url_for('index'))
+
+
+
+    
