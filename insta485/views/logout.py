@@ -8,7 +8,7 @@ import flask
 import insta485
 
 
-@insta485.app.route('/accounts/logout/')
+@insta485.app.route('/accounts/logout/', methods=['POST'])
 def logout():
   flask.session.clear()
-  return flask.redirect(flask.url_for('show_index'))
+  return flask.redirect(flask.url_for('show_login'))

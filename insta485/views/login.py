@@ -60,28 +60,7 @@ def show_login():
             return flask.redirect(flask.url_for('show_index'))
         context = {}
         return flask.render_template("login.html", **context)
-    return flask.render_template("login.html", **context)
-
-@insta485.app.route('/temp/')
-def temppage():
-    if 'username' in flask.session:
-        loggedIn = flask.session['username']
-                # Connect to database
-        connection = insta485.model.get_db()
-
-        # Query database for user's hashed password
-        cur = connection.execute(
-            "SELECT username, fullname "
-            "FROM users "
-            "WHERE username = ?",
-            (loggedIn,)
-        )
-        context = {"users":cur.fetchall()}
-        print(context)
-        return flask.render_template("temp.html", **context)
-    else:
-        context = {"users":[{"fullname":"Nobody"}]}
-        return flask.render_template("temp.html", **context)
+    return flask.redirect(flask.url_for('show_index'))
 
 
 @insta485.app.route('/accounts/', methods=['POST'])
