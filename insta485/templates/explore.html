@@ -16,18 +16,25 @@
           <p><a href = "/">Insta485 </a></p>
         </div>
         <div class = "headerSection2">
-          <p><a href = "/explore/"> explore </a><a href = "/{{logname}}/"> | {{logname}} </a></p>
+          <p><a href = "/explore/"> explore </a><a href = "/users/{{logname}}/"> | {{logname}} </a></p>
         </div>
       </div>
     </header>
 
     <h1> Discover People</h1>
 
-    {% for notfollow in not_following %}
+    {% for profile in allUsers %}
+      {% if profile.username not in following and profile.username != logname%}
         <div class = "follower_box">
-            <img class = "profilePic" src = "{{notfollow.user_img_url}}" alt = "not following profile pic">
-            <p class = "text"><a href = "/u/{{notfollow.username}}/">{{notfollow.username}}</a></p>
+            <img class = "profilePic" src = "{{profile.filename}}" alt = "not following profile pic">
+            <p class = "text"><a href = "/users/{{profile.username}}/">{{profile.username}}</a></p>
+            <form action="/following/?target=/explore/" method="post" enctype="multipart/form-data">
+              <input type="submit" name="follow" value="follow"/>
+              <input type="hidden" name="username" value="{{profile.username}}"/>
+              <input type="hidden" name="operation" value="follow"/>
+            </form>
         </div>
+      {% endif %}
     {% endfor %}
 
 </body>

@@ -8,10 +8,11 @@ import flask
 import insta485
 
 
-@insta485.app.route('/<user_url_slug>/following/')
+@insta485.app.route('/users/<user_url_slug>/following/')
 def show_following(user_url_slug):
     if 'username' in flask.session:
         loggedIn = flask.session['username']
+        print(user_url_slug)
         # Connect to database
         connection = insta485.model.get_db()
 
@@ -57,10 +58,9 @@ def show_following(user_url_slug):
                     }                    
         return flask.render_template("following.html", **context)
     else:
-        context = {"following":[{"username":"Nobody"}]}
-        return flask.render_template("following.html", **context)
+        return flask.redirect(flask.url_for('show_login'))
 
-@insta485.app.route('/<user_url_slug>/followers/')
+@insta485.app.route('/users/<user_url_slug>/followers/')
 def show_followers(user_url_slug):
     if 'username' in flask.session:
         loggedIn = flask.session['username']
@@ -131,5 +131,5 @@ def handle_following():
             )
             return flask.redirect(flask.request.args.get('target'))
     else:
-        print("Not signed in")
+        return flask.redirect(flask.url_for('show_login'))
         

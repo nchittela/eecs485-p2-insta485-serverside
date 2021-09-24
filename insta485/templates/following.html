@@ -16,7 +16,7 @@
           <p><a href = "/">Insta485 </a></p>
         </div>
         <div class = "headerSection2">
-          <p><a href = "/explore/"> explore </a><a href = "/{{logname}}/"> | {{logname}} </a></p>
+          <p><a href = "/explore/"> explore </a><a href = "/users/{{logname}}/"> | {{logname}} </a></p>
         </div>
       </div>
     </header>
@@ -26,8 +26,8 @@
     {% for follow in following %}
         <div class = "follower_box">
             <span>
-                <img class = "profilePic" src = "{{follow.filename}}" alt = "following profile pic">
-                <p class = "text"><a href = "/{{follow.username}}/">{{follow.username}}</a></p>
+                <img class = "profilePic" src = "/uploads/{{follow.filename}}" alt = "following profile pic">
+                <p class = "text"><a href = "/users/{{follow.username}}/">{{follow.username}}</a></p>
             </span>
             {% if follow.username == logname %}
 
