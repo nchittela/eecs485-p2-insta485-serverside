@@ -9,6 +9,7 @@ import insta485
 
 import uuid
 import hashlib
+import pathlib
 
 
 def check_password(username, password):
@@ -82,7 +83,7 @@ def account_default_redirect():
         password = flask.request.form['password']
         fullname = flask.request.form['fullname']
         email = flask.request.form['email']
-        file = flask.request.form['file']
+        # file = flask.request.form['file']
 
         # Unpack flask object
         fileobj = flask.request.files["file"]
@@ -103,14 +104,7 @@ def account_default_redirect():
         # get login data from database
         # Connect to database
         connection = insta485.model.get_db()
-
-        # Query database for user's hashed password
-        cur = connection.execute(
-            "INSERT INTO users(username, fullname, email, filename, password) "
-            "VALUES username = ?, fullname = ?, email = ?, filename = ?, password = ? ",
-            (username, fullname, email, file, password,)
-        )
-
+        
         #hash password
         algorithm = 'sha512'
         salt = uuid.uuid4().hex
@@ -121,9 +115,15 @@ def account_default_redirect():
         password_db_string = "$".join([algorithm, salt, password_hash])
         print(password_db_string)
 
+        # Query database for user's hashed password
+        cur = connection.execute(
+            "INSERT INTO users(username, fullname, email, filename, password) "
+            "VALUES (?, ?, ?, ?, ?) ",
+            (username, fullname, email, filename, password,)
+        )
+
         return flask.redirect(flask.request.args.get('target'))
     elif operation == "delete":
-        username = flask.request.form['username']
 
         # get login data from database
         # Connect to database
@@ -133,13 +133,29 @@ def account_default_redirect():
         cur = connection.execute(
             "DELETE FROM users "
             "WHERE username = ? ",
-            (username)
+            (flask.session['username'],)
         )
         flask.session.clear()
         return flask.redirect(flask.request.args.get('target'))
-    elif operation == "edit_account":
-        
-    elif operation == "update_password":
+    # elif operation == "edit_account":
+
+    # elif operation == "update_password":
     else:
         return flask.redirect(flask.url_for('show_index'))
     return flask.redirect(flask.request.args.get('target'))
+
+@insta485.app.route('/accounts/delete/', methods=['GET'])
+def show_delete():
+    """Display /login/ route."""
+    if 'username' in flask.session:
+        context = {"logname": flask.session['username'],}
+        return flask.render_template("delete.html", **context)
+    return flask.redirect(flask.url_for('show_index'))
+
+@insta485.app.route('/accounts/create/', methods=['GET'])
+def show_create():
+    """Display /login/ route."""
+    # if 'username' not in flask.session:
+    return flask.render_template("create.html")
+    # return flask.redirect(flask.url_for('show_index'))
+
