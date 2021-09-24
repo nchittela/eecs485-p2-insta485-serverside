@@ -33,14 +33,14 @@
 
             {% elif follow.username in userFollowing %}
                 <p class="text">following</p>
-                <form action="/following/?target=/{{currentPageUser}}/following/" method="post" enctype="multipart/form-data">
+                <form action="/following/?target=/users/{{currentPageUser}}/following/" method="post" enctype="multipart/form-data">
                   <input type="submit" name="unfollow" value="unfollow"/>
                   <input type="hidden" name="username" value="{{follow.username}}"/>
                   <input type="hidden" name="operation" value="unfollow"/>
                 </form>
             {% else %}
               <p class="text">not following</p>
-              <form action="/following/?target=/{{currentPageUser}}/following/" method="post" enctype="multipart/form-data">
+              <form action="/following/?target=/users/{{currentPageUser}}/following/" method="post" enctype="multipart/form-data">
                 <input type="submit" name="follow" value="follow"/>
                 <input type="hidden" name="username" value="{{follow.username}}"/>
                 <input type="hidden" name="operation" value="follow"/>

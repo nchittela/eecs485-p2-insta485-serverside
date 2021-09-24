@@ -122,6 +122,8 @@ def account_default_redirect():
             (username, fullname, email, filename, password,)
         )
 
+        flask.session['username'] = username
+
         return flask.redirect(flask.request.args.get('target'))
     elif operation == "delete":
 

@@ -9,3 +9,5 @@ from insta485.views.explore import show_explore
 from insta485.views.following import show_following
 from insta485.views.following import show_followers
 from insta485.views.following import handle_following
+
+from insta485.views.users import show_user

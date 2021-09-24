@@ -23,6 +23,13 @@
 
     <h1> {{username}} </h1>
 
+    {% if username == logname%}
+    <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
+      <input type="submit" name="logout" value="Logout"/>
+    </form>
+    {% endif %}
+
+<!-- 
     {% if username == logname %}
         
     {% elif logname_follows_username %}
@@ -49,7 +56,7 @@
 
     {% for post in posts %}
         <a href = "/p/{{post.postid}}/"><img src = "{{post.img_url}}" alt = "post pic"></a>
-    {% endfor %}
+    {% endfor %} -->
 
   </body>
 </html>
