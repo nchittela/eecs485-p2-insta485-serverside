@@ -28,13 +28,13 @@
     <div class="postCard">
         <div class="postHeader">
             <div class="user text">
-                <a href="/u/{{owner}}/"><img class="profilePic" src="{{owner_img_url}}"
+                <a href="/users/{{owner}}/"><img class="profilePic" src="{{owner_img_url}}"
                         alt="{{owner}} profile pic"> </a>
-                <a href="/u/{{owner}}/">
+                <a href="/users/{{owner}}/">
                     <p> {{owner}} </p>
                 </a>
             </div>
-            <p class="text"><a href="/p/{{postid}}/"> {{timestamp}} </a></p>
+            <p class="text"><a href="/posts/{{postid}}/"> {{timestamp}} </a></p>
         </div>
         <img class="postPic" src="{{img_url}}" alt="post image">
 
@@ -44,8 +44,22 @@
             <p class="text">{{likes}} likes </p>
         {% endif %}
 
+        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+        <form action="/likes/?target={{url_for('route function', parameter = value)}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="like"/>
+            <input type="hidden" name="postid" value="{{postid}}"/>
+            <input type="submit" name="like" value="like"/>
+        </form>
+
+        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+        <form action="/likes/?target={{url_for('route function', parameter = value)}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="unlike"/>
+            <input type="hidden" name="postid" value="{{postid}}"/>
+            <input type="submit" name="unlike" value="unlike"/>
+        </form>
+
         {% for comment in comments %}
-            <p class="text"> <b><a href="/u/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
+            <p class="text"> <b><a href="/users/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
         {% endfor %}
     </div>
 
