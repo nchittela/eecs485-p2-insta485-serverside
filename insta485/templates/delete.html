@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap" rel="stylesheet">
+    <title>insta485</title>
+  </head>
+  <body>
+
+    <header>
+      <div>
+        <div class = "headerSection">
+          <p><a href = "/"> <img id = "instalogo" src = "/images/instaLogo.png" alt = "Instagram Icon"></a></p>
+          <p><a href = "/">Insta485 </a></p>
+        </div>
+        <div class = "headerSection2">
+          <p><a href = "/explore/"> explore </a><a href = "/users/{{logname}}/"> | {{logname}} </a></p>
+        </div>
+      </div>
+    </header>
+
+    <!-- DO NOT CHANGE THIS -->
+<form action="/accounts/?target=/accounts/create/" method="post" enctype="multipart/form-data">
+    <input type="submit" name="delete" value="confirm delete account"/>
+    <input type="hidden" name="operation" value="delete"/>
+</form>
+
+</body>
+</html>
