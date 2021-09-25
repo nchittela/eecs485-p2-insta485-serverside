@@ -28,7 +28,7 @@
     <div class="postCard">
         <div class="postHeader">
             <div class="user text">
-                <a href="/users/{{owner}}/"><img class="profilePic" src="{{owner_img_url}}"
+                <a href="/users/{{owner}}/"><img class="profilePic" src="/uploads/{{owner_img_url}}"
                         alt="{{owner}} profile pic"> </a>
                 <a href="/users/{{owner}}/">
                     <p> {{owner}} </p>
@@ -36,7 +36,7 @@
             </div>
             <p class="text"><a href="/posts/{{postid}}/"> {{timestamp}} </a></p>
         </div>
-        <img class="postPic" src="{{img_url}}" alt="post image">
+        <img class="postPic" src="/uploads/{{img_url}}" alt="post image">
 
         {% if likes == 1 %}
             <p class="text">{{likes}} like </p>

@@ -16,9 +16,18 @@ import pathlib
 @insta485.app.route('/users/<user_url_slug>/')
 def show_user(user_url_slug):
     if 'username' in flask.session:
-        loggedIn = flask.session['username']
-        # Connect to database
+        # Does page exist
         connection = insta485.model.get_db()
+        cur = connection.execute(
+            "SELECT fullname "
+            "FROM users "
+            "WHERE username = ?",
+            (user_url_slug,)
+        )
+        if len(cur.fetchall()) == 0:
+            flask.abort(404)
+
+        loggedIn = flask.session['username']
 
         # Query database for people following users user_url_slug
         cur = connection.execute(
@@ -86,5 +95,5 @@ def show_user(user_url_slug):
                     }                    
         return flask.render_template("user.html", **context)
     else:
-        return flask.render_template("login.html")        
+        return flask.redirect(flask.url_for("show_login"))       
 

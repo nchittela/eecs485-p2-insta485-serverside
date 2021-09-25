@@ -108,8 +108,7 @@ def show_followers(user_url_slug):
                     }                    
         return flask.render_template("followers.html", **context)
     else:
-        context = {"following":[{"username":"Nobody"}]}
-        return flask.render_template("following.html", **context)
+        return flask.redirect(flask.url_for('show_login'))
 
 @insta485.app.route('/following/', methods=['POST'])
 def handle_following():

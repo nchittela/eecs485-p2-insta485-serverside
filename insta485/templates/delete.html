@@ -22,7 +22,7 @@
     </header>
 
     <!-- DO NOT CHANGE THIS -->
-<form action="/accounts/?target=/accounts/create/" method="post" enctype="multipart/form-data">
+<form action="/accounts/?target={{url_for('show_create')}}" method="post" enctype="multipart/form-data">
     <input type="submit" name="delete" value="confirm delete account"/>
     <input type="hidden" name="operation" value="delete"/>
 </form>

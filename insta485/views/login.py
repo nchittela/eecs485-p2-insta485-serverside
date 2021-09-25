@@ -25,6 +25,10 @@ def check_password(username, password):
         (username,)
     )
     result = cur.fetchall()
+
+    if len(result) == 0:
+        return False
+
     # salted and hashed password from database
     databasePassword = result[0]['password']
     # print("DEBUG", result[0]['password'])
@@ -69,6 +73,8 @@ def account_default_redirect():
 
         if check_password(username, password):
             flask.session['username'] = flask.request.form['username']
+        else:
+            flask.abort(403)
         return flask.redirect(target)
     elif operation == "create":
         username = flask.request.form['username']
@@ -161,7 +167,7 @@ def account_default_redirect():
                 "UPDATE users "
                 "SET email = ?, fullname = ?, filename = ? "
                 "WHERE username = ? ",
-                (email, fullname, filename, username,)
+                (email, fullname, uuid_basename, username,)
             )
         else:
             cur = connection.execute(
@@ -170,13 +176,7 @@ def account_default_redirect():
                 "WHERE username = ? ",
                 (email, fullname, username,)
             )
-
-        context = {"logname": username,
-                    "fullname": fullname,
-                    "email":email,
-                    "file":filename
-        }
-        return flask.render_template("edit.html", **context)
+        return flask.redirect(target)
     # elif operation == "update_password":
     else:
         return flask.redirect(flask.url_for('show_index'))

@@ -23,7 +23,7 @@
 
     <h1> {{username}} </h1>
     <p class="text">{{fullname}}</p>
-    <a href="/accounts/edit/">Edit Profile</a>
+    <a href="/accounts/edit/">Edit profile</a>
 
     {% if username == logname%}
     <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
@@ -72,7 +72,7 @@
     </form>
 
     {% for post in posts %}
-        <a href = "/posts/{{post.postid}}/"><img src = "{{post.img_url}}" alt = "post pic"></a>
+        <a href = "/posts/{{post.postid}}/"><img src = "/uploads/{{post.filename}}" alt = "post pic"></a>
         <hr>
     {% endfor %}
 

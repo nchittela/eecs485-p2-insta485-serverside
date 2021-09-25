@@ -26,7 +26,7 @@
     {% for profile in allUsers %}
       {% if profile.username not in following and profile.username != logname%}
         <div class = "follower_box">
-            <img class = "profilePic" src = "{{profile.filename}}" alt = "not following profile pic">
+            <img class = "profilePic" src = "/uploads/{{profile.filename}}" alt = "not following profile pic">
             <p class = "text"><a href = "/users/{{profile.username}}/">{{profile.username}}</a></p>
             <form action="/following/?target=/explore/" method="post" enctype="multipart/form-data">
               <input type="submit" name="follow" value="follow"/>
