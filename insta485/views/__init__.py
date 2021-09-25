@@ -13,3 +13,5 @@ from insta485.views.following import handle_following
 
 from insta485.views.users import show_user
 from insta485.views.posts import show_post
+from insta485.views.login import show_password
+

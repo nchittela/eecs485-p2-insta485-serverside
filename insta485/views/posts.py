@@ -4,6 +4,7 @@ Insta485 index (main) view.
 URLs include:
 /
 """
+from re import I
 import flask
 import insta485
 
@@ -156,5 +157,83 @@ def show_post(postid_url_slug):
 
         }
         return flask.render_template("post.html", **context)
+    else:
+        return flask.redirect(flask.url_for('show_login'))
+
+
+@insta485.app.route('/comments/', methods=['POST'])
+def do_comment():
+    if 'username' in flask.session:
+        loggedIn = flask.session['username']
+        operation = flask.request.form['operation']
+        target = flask.request.args.get('target')
+
+        # Connect to database
+        connection = insta485.model.get_db()
+
+        if operation == 'create':
+            # Query database for people following users user_url_slug
+            cur = connection.execute(
+                "INSERT INTO comments(owner, postid, text) "
+                "VALUES (?, ?, ?) ",
+                (loggedIn, flask.request.form['postid'], flask.request.form['text'],)
+            )
+        else:
+            cur = connection.execute(
+                "DELETE FROM comments "
+                "WHERE commentid = ? ",
+                (flask.request.form['commentid'],)
+            )
+        if target == None:
+            return flask.redirect(flask.url_for('show_index'))
+        else:
+            return flask.redirect(target)
+    else:
+        return flask.redirect(flask.url_for('show_login'))
+
+@insta485.app.route('/posts/', methods=['POST'])
+def do_post():
+    if 'username' in flask.session:
+        loggedIn = flask.session['username']
+        operation = flask.request.form['operation']
+        target = flask.request.args.get('target')
+        
+
+        # Connect to database
+        connection = insta485.model.get_db()
+
+        if operation == 'create':
+            # Unpack flask object
+            fileobj = flask.request.files["file"]
+            filename = fileobj.filename
+
+            # Compute base name (filename without directory).  We use a UUID to avoid
+            # clashes with existing files, and ensure that the name is compatible with the
+            # filesystem.
+            uuid_basename = "{stem}{suffix}".format(
+                stem=uuid.uuid4().hex,
+                suffix=pathlib.Path(filename).suffix
+            )
+
+            # Save to disk
+            path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
+            fileobj.save(path)
+
+            # Query database for people following users user_url_slug
+            cur = connection.execute(
+                "INSERT INTO posts(filename, owner) "
+                "VALUES (?, ?) ",
+                (filename, loggedIn,)
+            )
+        else:
+            cur = connection.execute(
+                "DELETE FROM posts "
+                "WHERE postid = ? ",
+                (flask.request.form['postid'],)
+            )
+        if target == None:
+            return flask.redirect(flask.url_for('show_user'))
+        else:
+            return flask.redirect(target)
     else:
         return flask.redirect(flask.url_for('show_login'))

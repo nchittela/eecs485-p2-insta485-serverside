@@ -177,7 +177,32 @@ def account_default_redirect():
                 (email, fullname, username,)
             )
         return flask.redirect(target)
-    # elif operation == "update_password":
+    elif operation == "update_password":
+        username = flask.session['username']
+        old_password = flask.request.form['password']
+        new_password1 = flask.request.form['new_password1']
+        new_password2 = flask.request.form['new_password2']
+
+        if new_password1 == new_password2:
+            algorithm = 'sha512'
+            salt = uuid.uuid4().hex
+            hash_obj = hashlib.new(algorithm)
+            password_salted = salt + new_password1
+            hash_obj.update(password_salted.encode('utf-8'))
+            password_hash = hash_obj.hexdigest()
+            password_db_string = "$".join([algorithm, salt, password_hash])
+            print(password_db_string)
+
+            connection = insta485.model.get_db()
+
+            cur = connection.execute(
+                "UPDATE users "
+                "SET password = ? "
+                "WHERE username = ? ",
+                (password_db_string, username,)
+            )
+
+        return flask.redirect(target)
     else:
         return flask.redirect(flask.url_for('show_index'))
     return flask.redirect(target)
@@ -219,4 +244,17 @@ def show_edit():
                     "file":result[0]["filename"]
         }
         return flask.render_template("edit.html", **context)
-        # return flask.redirect(flask.url_for('show_index'))
+    return flask.redirect(flask.url_for('show_index'))
+
+@insta485.app.route('/accounts/password/', methods=['GET'])
+def show_password():
+    """Display /login/ route."""
+    if 'username' in flask.session:
+        connection = insta485.model.get_db()
+        username = flask.session['username']
+
+        context = {"logname": username,
+        }
+        return flask.render_template("password.html", **context)
+    return flask.redirect(flask.url_for('show_index'))
+
