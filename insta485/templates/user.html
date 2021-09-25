@@ -22,6 +22,8 @@
     </header>
 
     <h1> {{username}} </h1>
+    <p class="text">{{fullname}}</p>
+    <a href="/accounts/edit/">Edit Profile</a>
 
     {% if username == logname%}
     <form action="/accounts/logout/" method="post" enctype="multipart/form-data">
@@ -29,14 +31,32 @@
     </form>
     {% endif %}
 
-<!-- 
+
     {% if username == logname %}
         
     {% elif logname_follows_username %}
         <p class="text">following</p>
+        <form action="/following/?target={{url_for('show_user', user_url_slug = username)}}" method="post" enctype="multipart/form-data">
+          <input type="submit" name="unfollow" value="unfollow"/>
+          <input type="hidden" name="username" value="{{username}}"/>
+          <input type="hidden" name="operation" value="unfollow"/>
+        </form>
     {% else %}
         <p class="text">not following</p>
+        <form action="/following/?target={{url_for('show_user', user_url_slug = username)}}" method="post" enctype="multipart/form-data">
+          <input type="submit" name="follow" value="follow"/>
+          <input type="hidden" name="username" value="{{username}}"/>
+          <input type="hidden" name="operation" value="follow"/>
+        </form>
     {% endif %}
+
+    {% if followers == 1 %}
+        <p class="text"><a href = "/users/{{username}}/followers/">{{followers}} follower</a> </p>
+    {% else %}
+        <p class="text"><a href = "/users/{{username}}/followers/">{{followers}} followers</a> </p>
+    {% endif %}
+
+    <p class="text"><a href = "/users/{{username}}/following/">{{following}} following</a> </p>
 
     {% if total_posts == 1 %}
         <p class="text">{{total_posts}} post </p>
@@ -44,19 +64,19 @@
         <p class="text">{{total_posts}} posts </p>
     {% endif %}
 
-    {% if followers == 1 %}
-        <p class="text"><a href = "/u/{{username}}/followers/">{{followers}} follower</a> </p>
-    {% else %}
-        <p class="text"><a href = "/u/{{username}}/followers/">{{followers}} followers</a> </p>
-    {% endif %}
-
-    <p class="text"><a href = "/u/{{username}}/following/">{{following}} following</a> </p>
-
-    <p class="text">{{fullname}}</p>
+    <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+    <form action="<FIXME_POSTS_URL_HERE>?target=<FIXME_CURRENT_PAGE_URL_HERE>" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*" required/>
+      <input type="submit" name="create_post" value="upload new post"/>
+      <input type="hidden" name="operation" value="create"/>
+    </form>
 
     {% for post in posts %}
-        <a href = "/p/{{post.postid}}/"><img src = "{{post.img_url}}" alt = "post pic"></a>
-    {% endfor %} -->
+        <a href = "/posts/{{post.postid}}/"><img src = "{{post.img_url}}" alt = "post pic"></a>
+        <hr>
+    {% endfor %}
+
+
 
   </body>
 </html>

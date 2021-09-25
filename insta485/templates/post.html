@@ -44,23 +44,45 @@
             <p class="text">{{likes}} likes </p>
         {% endif %}
 
-        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-        <form action="/likes/?target={{url_for('route function', parameter = value)}}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="operation" value="like"/>
-            <input type="hidden" name="postid" value="{{postid}}"/>
-            <input type="submit" name="like" value="like"/>
-        </form>
-
-        <!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
-        <form action="/likes/?target={{url_for('route function', parameter = value)}}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="operation" value="unlike"/>
-            <input type="hidden" name="postid" value="{{postid}}"/>
-            <input type="submit" name="unlike" value="unlike"/>
-        </form>
+        {% if liked %}
+            <form action="/likes/?target={{url_for('show_post', postid_url_slug = postid)}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="unlike"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="submit" name="unlike" value="unlike"/>
+            </form>
+        {% else %}
+            <form action="/likes/?target={{url_for('show_post', postid_url_slug = postid)}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="like"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="submit" name="like" value="like"/>
+            </form>
+        {% endif%}
 
         {% for comment in comments %}
             <p class="text"> <b><a href="/users/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
+            {% if comment.owner == logname %}
+                <form action="/comments/?target={{url_for('show_post', postid_url_slug = postid)}}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="operation" value="delete"/>
+                    <input type="hidden" name="commentid" value="{{comment.commentid}}"/>
+                    <input type="submit" name="uncomment" value="delete"/>
+                </form>
+            {% endif %}
         {% endfor %}
+
+        <form action="/comments/?target={{url_for('show_post', postid_url_slug = postid)}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="create"/>
+            <input type="hidden" name="postid" value="{{postid}}"/>
+            <input type="text" name="text" required/>
+            <input type="submit" name="comment" value="comment"/>
+        </form>
+
+        {% if owner == logname %}
+            <form action="/posts/?target={{url_for('show_user', user_url_slug = logname)}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="delete"/>
+                <input type="hidden" name="postid" value="{{postid}}"/>
+                <input type="submit" name="delete" value="delete this post"/>
+            </form>
+        {% endif %}
     </div>
 
 </body>

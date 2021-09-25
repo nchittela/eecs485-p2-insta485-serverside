@@ -113,6 +113,9 @@ def show_followers(user_url_slug):
 
 @insta485.app.route('/following/', methods=['POST'])
 def handle_following():
+    target = flask.request.args.get('target')
+    if target == None:
+        target = flask.url_for("show_index")
     if 'username' in flask.session:
         if flask.request.form['operation'] == 'unfollow':
             connection = insta485.model.get_db()
@@ -122,14 +125,14 @@ def handle_following():
                 (flask.session['username'], flask.request.form['username'],)
             )
 
-            return flask.redirect(flask.request.args.get('target'))
+            return flask.redirect(target)
         else:
             connection = insta485.model.get_db()
             cur = connection.execute(
                 "INSERT INTO following (username1, username2) VALUES(?, ?)",
                 (flask.session['username'], flask.request.form['username'])
             )
-            return flask.redirect(flask.request.args.get('target'))
+            return flask.redirect(target)
     else:
         return flask.redirect(flask.url_for('show_login'))
         

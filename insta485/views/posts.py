@@ -11,6 +11,8 @@ import uuid
 import hashlib
 import pathlib
 
+import arrow
+
 @insta485.app.route('/likes/', methods=['POST'])
 def do_likes():
     target = flask.request.args.get('target')
@@ -37,8 +39,98 @@ def do_likes():
             (owner,postid,)
         )
     
-    if target == "":
+    if target == None:
         return flask.redirect(flask.url_for('show_login'))
     else:
-        return flask.redirect(flask.url_for(target))
+        return flask.redirect(target)
     
+@insta485.app.route('/posts/<postid_url_slug>/', methods=['GET'])
+def show_post(postid_url_slug):
+    loggedIn = flask.session['username']
+
+    # Connect to database
+    connection = insta485.model.get_db()
+
+    # Query database for people following users user_url_slug
+    cur = connection.execute(
+        "SELECT owner "
+        "FROM posts "
+        "WHERE postid = ?",
+        (postid_url_slug,)
+    )
+    owner = cur.fetchall()[0]["owner"]
+
+    # owner_img_url
+    cur = connection.execute(
+        "SELECT filename "
+        "FROM users "
+        "WHERE username = ?",
+        (owner,)
+    )
+    owner_img_url = cur.fetchall()[0]["filename"]
+
+    # img_url
+    cur = connection.execute(
+        "SELECT filename "
+        "FROM posts "
+        "WHERE postid = ?",
+        (postid_url_slug,)
+    )
+    img_url = cur.fetchall()[0]["filename"]
+
+    # likes
+    cur = connection.execute(
+        "SELECT likeid "
+        "FROM likes "
+        "WHERE postid = ?",
+        (postid_url_slug,)
+    )
+    likes = len(cur.fetchall())
+
+    # comments
+    cur = connection.execute(
+        "SELECT text, owner, commentid "
+        "FROM comments "
+        "WHERE postid = ? "
+        "ORDER BY commentid DESC ",
+        (postid_url_slug,)
+    )
+    comments = cur.fetchall()
+
+    # liked
+    liked = False
+    cur = connection.execute(
+        "SELECT likeid "
+        "FROM likes "
+        "WHERE owner = ? AND postid = ? ",
+        (loggedIn,postid_url_slug,)
+    )
+    if len(cur.fetchall()) > 0:
+        liked = True
+
+    # post timestamp
+    cur = connection.execute(
+        "SELECT created "
+        "FROM posts "
+        "WHERE postid = ? ",
+        (postid_url_slug,)
+    )
+    timestamp = cur.fetchall()[0]["created"]
+
+    timestamp = arrow.get(timestamp).humanize()
+    
+
+    context = {
+        "logname":loggedIn,
+        "owner":owner,
+        "owner_img_url":owner_img_url,
+        "postid" : postid_url_slug,
+        "img_url": img_url,
+        "likes": likes,
+        "comments": comments,
+        "liked": liked,
+        "timestamp": timestamp
+
+
+    }
+    return flask.render_template("post.html", **context)

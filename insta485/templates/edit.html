@@ -16,22 +16,21 @@
           <p><a href = "/">Insta485 </a></p>
         </div>
         <div class = "headerSection2">
-          <p><a href = "/accounts/create/"> login </a></p>
+          <p><a href = "/explore/"> explore </a><a href = "/users/{{logname}}/"> | {{logname}} </a></p>
         </div>
       </div>
     </header>
 
-    <h1>LOGIN PAGE</h1>
-    <!-- DO NOT CHANGE THIS (aside from styling) -->
-    <form action="/accounts/?target={{url_for('show_index')}}" method="post" enctype="multipart/form-data">
-        <input type="text" name="username" required/>
-        <input type="password" name="password" required/>
-        <input type="submit" value="login"/>
-        <input type="hidden" name="operation" value="login"/>
+    <form action="/accounts/?target={{url_for('show_edit')}}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*"/>
+        <input type="text" name="fullname" value="{{fullname}}" required/>
+        <input type="text" name="email" value="{{email}}" required/>
+        <input type="submit" name="update" value="submit"/>
+        <input type="hidden" name="operation" value="edit_account"/>
     </form>
-    <div>Don't have an account? <a href="/accounts/create">Sign up</a></div>
 
-
+    <a href="/accounts/password/">Change Password</a>
+    <a href="/accounts/delete/">Delete Account</a>
 
 </body>
 </html>
