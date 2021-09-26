@@ -25,10 +25,8 @@
 
     {% for follow in following %}
         <div class = "follower_box">
-            <span>
-                <img class = "profilePic" src = "/uploads/{{follow.filename}}" alt = "following profile pic">
-                <p class = "text"><a href = "/users/{{follow.username}}/">{{follow.username}}</a></p>
-            </span>
+            <img class = "profilePic" src = "/uploads/{{follow.filename}}" alt = "following profile pic">
+            <p class = "text"><a href = "/users/{{follow.username}}/">{{follow.username}}</a></p>
             {% if follow.username == logname %}
 
             {% elif follow.username in userFollowing %}
