@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Courgette&display=swap" rel="stylesheet">
+    <title>insta485</title>
+  </head>
+  <body>
+
+    <header>
+      <div>
+        <div class = "headerSection">
+          <p><a href = "/"> <img id = "instalogo" src = "/images/instaLogo.png" alt = "Instagram Icon"></a></p>
+          <p><a href = "/">Insta485 </a></p>
+        </div>
+        <div class = "headerSection2">
+          <p><a href = "/accounts/create/"> login </a></p>
+        </div>
+      </div>
+    </header>
+
+    <h1>LOGIN PAGE</h1>
+    <!-- DO NOT CHANGE THIS (aside from styling) -->
+    <form action="/accounts/?target=/" method="post" enctype="multipart/form-data">
+        <input type="text" name="username" required/>
+        <input type="password" name="password" required/>
+        <input type="submit" value="login"/>
+        <input type="hidden" name="operation" value="login"/>
+    </form>
+    <div>Don't have an account? <a href="/accounts/create">Sign up</a></div>
+
+
+
+</body>
+</html>
