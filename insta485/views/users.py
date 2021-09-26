@@ -7,14 +7,10 @@ URLs include:
 import flask
 import insta485
 
-import uuid
-import hashlib
-import pathlib
-
-
 
 @insta485.app.route('/users/<user_url_slug>/')
 def show_user(user_url_slug):
+    """Show user."""
     if 'username' in flask.session:
         # Does page exist
         connection = insta485.model.get_db()
@@ -27,14 +23,14 @@ def show_user(user_url_slug):
         if len(cur.fetchall()) == 0:
             flask.abort(404)
 
-        loggedIn = flask.session['username']
+        logged_in = flask.session['username']
 
         # Query database for people following users user_url_slug
         cur = connection.execute(
             "SELECT username2 "
             "FROM following "
             "WHERE username1 = ?",
-            (loggedIn,)
+            (logged_in,)
         )
         result = cur.fetchall()
 
@@ -84,16 +80,14 @@ def show_user(user_url_slug):
 
         total_posts = len(posts)
 
-        context = {"username":user_url_slug,
-                    "logname": loggedIn,
-                    "logname_follows_username": logname_follows_username,
-                    "followers": followers,
-                    "following": following,
-                    "fullname":fullname,
-                    "posts":posts,
-                    "total_posts":total_posts
-                    }                    
+        context = {"username": user_url_slug,
+                   "logname": logged_in,
+                   "logname_follows_username": logname_follows_username,
+                   "followers": followers,
+                   "following": following,
+                   "fullname": fullname,
+                   "posts": posts,
+                   "total_posts": total_posts
+                   }
         return flask.render_template("user.html", **context)
-    else:
-        return flask.redirect(flask.url_for("show_login"))       
-
+    return flask.redirect(flask.url_for("show_login"))

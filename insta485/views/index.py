@@ -9,21 +9,22 @@ import arrow
 import insta485
 app = flask.Flask(__name__)
 
+
 @insta485.app.route('/')
 def show_index():
     """Display / route."""
     if 'username' in flask.session:
-        loggedIn = flask.session['username']
+        logged_in = flask.session['username']
 
         # Connect to database
         connection = insta485.model.get_db()
 
-        #people following
+        # people following
         cur = connection.execute(
             "SELECT username2 "
             "FROM following "
             "WHERE username1 = ? ",
-            (loggedIn,)
+            (logged_in,)
         )
         result = cur.fetchall()
 
@@ -43,18 +44,16 @@ def show_index():
             "SELECT owner, postid, filename, created "
             "FROM posts "
             "WHERE owner = ? ",
-            (loggedIn,)
+            (logged_in,)
         )
         posts = cur.fetchall()
         all_posts += posts
 
-            # print("HEREEEEEEEEEEEEEEEEEE")
-            # print(all_posts)
-
-        for i in range(len(all_posts)):
+        for i, apost in enumerate(all_posts):
             # print(all_posts[i]['created'])
 
-            all_posts[i]['timestamp'] = arrow.get(all_posts[i]['created']).humanize()
+            human = arrow.get(apost['created']).humanize()
+            all_posts[i]['timestamp'] = human
 
             cur = connection.execute(
                 "SELECT likeid "
@@ -78,7 +77,7 @@ def show_index():
                 "SELECT likeid "
                 "FROM likes "
                 "WHERE owner = ? AND postid = ? ",
-                (loggedIn, all_posts[i]['postid'],)
+                (logged_in, all_posts[i]['postid'],)
             )
             if len(cur.fetchall()) > 0:
                 all_posts[i]['liked'] = True
@@ -91,29 +90,26 @@ def show_index():
             )
             all_posts[i]['owner_img_url'] = cur.fetchall()[0]['filename']
 
+        all_posts.sort(key=lambda x: x['postid'], reverse=True)
 
-        sort_posts = all_posts.sort(key=lambda x: x['postid'], reverse=True)
-        # print(all_posts)
-        # for i in all_posts:
-	    #     print(i['created'], i['postid'])
-
-        context = {
-            "logname": loggedIn,
-            "posts": all_posts
-        }
+        context = {"logname": logged_in,
+                   "posts": all_posts
+                   }
         return flask.render_template("index.html", **context)
-    else:
-        return flask.redirect(flask.url_for('show_login'))
+
+    return flask.redirect(flask.url_for('show_login'))
+
 
 @insta485.app.route('/uploads/<filename>')
 def check_file(filename):
+    """Check file."""
     if 'username' not in flask.session:
         flask.abort(403)
     else:
         # Connect to database
         connection = insta485.model.get_db()
 
-        #people following
+        # people following
         cur = connection.execute(
             "SELECT * "
             "FROM posts "
@@ -121,8 +117,7 @@ def check_file(filename):
             (filename,)
         )
 
-        if(len(cur.fetchall()) == 0):
+        if len(cur.fetchall()) == 0:
             flask.abort(404)
-    
-    return flask.send_from_directory(insta485.app.config["UPLOAD_FOLDER"],filename)
-    
+    folder = insta485.app.config["UPLOAD_FOLDER"]
+    return flask.send_from_directory(folder, filename)

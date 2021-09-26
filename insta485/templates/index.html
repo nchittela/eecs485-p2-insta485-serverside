@@ -32,7 +32,7 @@
                 <a href="/users/{{post.owner}}/"><img class="profilePic" src="/uploads/{{post.owner_img_url}}"
                         alt="{{post.owner}} profile pic"> </a>
                 <a href="/users/{{post.owner}}/">
-                    <p> {{post.owner}} </p>
+                    {{post.owner}}
                 </a>
             </div>
             <p class="text"><a href="/posts/{{post.postid}}/"> {{post.timestamp}} </a></p>
@@ -40,7 +40,7 @@
         <img class="postPic" src="/uploads/{{post.filename}}" alt="post image">
 
         {% if post.likes == 1 %}
-            <p class="text">{{post.likes}} like </p>
+            {{post.likes}} like
         {% else %}
             <p class="text">{{post.likes}} likes </p>
         {% endif %}
@@ -72,65 +72,6 @@
 
     </div>
     {% endfor %}
-
-<!-- 
-
-
-
-
-
-
-    <div class="postCard">
-        <div class="postHeader">
-            <div class="user text">
-                <a href="/u/awdeorio/"><img class="profilePic"
-                        src="/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg" alt="awdeorio profile pic"> </a>
-                <a href="/u/awdeorio/">
-                    <p> awdeorio </p>
-                </a>
-            </div>
-            <p class="text"><a href="/p/3/"> 10 minutes ago </a></p>
-        </div>
-        <img class="postPic" src="/uploads/9887e06812ef434d291e4936417d125cd594b38a.jpg" alt="chickens">
-        <p class="text"> 1 like </p>
-        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> #chickensofinstagram </p>
-        <p class="text"> <b><a href="/u/jflinn/">jflinn </a></b>I &lt;3 chickens </p>
-        <p class="text"> <b><a href="/u/michjc/">michjc</a></b> Cute overload! </p>
-    </div>
-
-    <div class="postCard">
-        <div class="postHeader">
-            <div class="user text">
-                <a href="/u/jflinn/"><img class="profilePic" src="/uploads/505083b8b56c97429a728b68f31b0b2a089e5113.jpg"
-                        alt="jflinn profile picture"> </a>
-                <a href="/u/jflinn/">
-                    <p> jflinn </p>
-                </a>
-            </div>
-            <p class="text"><a href="/p/2/"> 4 hours ago </a></p>
-        </div>
-        <img class="postPic" src="/uploads/ad7790405c539894d25ab8dcf0b79eed3341e109.jpg" alt="crossword pic">
-        <p class="text"> 2 likes </p>
-        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> Sick #crossword</p>
-    </div>
-
-    <div class="postCard">
-        <div class="postHeader">
-            <div class="user text">
-                <a href="/u/awdeorio/"><img class="profilePic"
-                        src="/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg" alt="awdeorio profile pic"> </a>
-                <a href="/u/awdeorio/">
-                    <p> awdeorio </p>
-                </a>
-            </div>
-            <p class="text"><a href="/p/1/"> a day ago </a></p>
-        </div>
-        <img class="postPic" src="/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg" alt="chickens on a plank">
-        <p class="text"> 3 likes </p>
-        <p class="text"> <b><a href="/u/jflinn/">jflinn </a></b> Walking the plank #chickensofinstagram </p>
-        <p class="text"> <b><a href="/u/awdeorio/">awdeorio</a></b> This was after trying to teach them to do a
-            #crossword </p>
-    </div> -->
 
 </body>
 

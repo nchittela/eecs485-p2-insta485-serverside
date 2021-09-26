@@ -4,19 +4,17 @@ Insta485 index (main) view.
 URLs include:
 /
 """
-from re import I
-import flask
-import insta485
-
 import uuid
-import hashlib
 import pathlib
 import os
-
+import flask
 import arrow
+import insta485
+
 
 @insta485.app.route('/likes/', methods=['POST'])
 def do_likes():
+    """Do likes."""
     target = flask.request.args.get('target')
     operation = flask.request.form['operation']
     owner = flask.session['username']
@@ -32,7 +30,7 @@ def do_likes():
             "SELECT owner, postid "
             "FROM likes "
             "Where owner = ? AND postid = ? ",
-            (owner,postid,)
+            (owner, postid,)
         )
         if len(cur.fetchall()) == 1:
             flask.abort(409)
@@ -40,37 +38,38 @@ def do_likes():
         cur = connection.execute(
             "INSERT INTO likes (owner, postid) "
             "VALUES (?, ?) ",
-            (owner,postid,)
+            (owner, postid,)
         )
     else:
-        #check for duplicate unlike
+        # check for duplicate unlike
         cur = connection.execute(
             "SELECT owner, postid "
             "FROM likes "
             "Where owner = ? AND postid = ? ",
-            (owner,postid,)
+            (owner, postid,)
         )
         if len(cur.fetchall()) == 0:
             flask.abort(409)
-        
-         # Query database for user's hashed password
+
+        # Query database for user's hashed password
         cur = connection.execute(
             "DELETE FROM likes "
             "WHERE owner = ? AND postid = ? ",
-            (owner,postid,)
+            (owner, postid,)
         )
-    
-    if target == None:
+
+    if target is None:
         return flask.redirect(flask.url_for('show_login'))
-    else:
-        return flask.redirect(target)
-    
+    return flask.redirect(target)
+
+
 @insta485.app.route('/posts/<postid_url_slug>/', methods=['GET'])
 def show_post(postid_url_slug):
+    """Show post."""
     print('username' in flask.session)
 
     if 'username' in flask.session:
-        loggedIn = flask.session['username']
+        logged_in = flask.session['username']
 
         # Connect to database
         connection = insta485.model.get_db()
@@ -127,7 +126,7 @@ def show_post(postid_url_slug):
             "SELECT likeid "
             "FROM likes "
             "WHERE owner = ? AND postid = ? ",
-            (loggedIn,postid_url_slug,)
+            (logged_in, postid_url_slug,)
         )
         if len(cur.fetchall()) > 0:
             liked = True
@@ -142,30 +141,26 @@ def show_post(postid_url_slug):
         timestamp = cur.fetchall()[0]["created"]
 
         timestamp = arrow.get(timestamp).humanize()
-        
 
-        context = {
-            "logname":loggedIn,
-            "owner":owner,
-            "owner_img_url":owner_img_url,
-            "postid" : postid_url_slug,
-            "img_url": img_url,
-            "likes": likes,
-            "comments": comments,
-            "liked": liked,
-            "timestamp": timestamp
-
-
-        }
+        context = {"logname": logged_in,
+                   "owner": owner,
+                   "owner_img_url": owner_img_url,
+                   "postid": postid_url_slug,
+                   "img_url": img_url,
+                   "likes": likes,
+                   "comments": comments,
+                   "liked": liked,
+                   "timestamp": timestamp
+                   }
         return flask.render_template("post.html", **context)
-    else:
-        return flask.redirect(flask.url_for('show_login'))
+    return flask.redirect(flask.url_for('show_login'))
 
 
 @insta485.app.route('/comments/', methods=['POST'])
 def do_comment():
+    """Do comment."""
     if 'username' in flask.session:
-        loggedIn = flask.session['username']
+        logged_in = flask.session['username']
         operation = flask.request.form['operation']
         target = flask.request.args.get('target')
 
@@ -180,7 +175,8 @@ def do_comment():
             cur = connection.execute(
                 "INSERT INTO comments(owner, postid, text) "
                 "VALUES (?, ?, ?) ",
-                (loggedIn, flask.request.form['postid'], flask.request.form['text'],)
+                (logged_in, flask.request.form['postid'],
+                 flask.request.form['text'],)
             )
         else:
             cur = connection.execute(
@@ -189,7 +185,7 @@ def do_comment():
                 "WHERE commentid = ? ",
                 (flask.request.form['commentid'],)
             )
-            if(cur.fetchall()[0]['owner'] != loggedIn):
+            if cur.fetchall()[0]['owner'] != logged_in:
                 flask.abort(403)
 
             cur = connection.execute(
@@ -197,35 +193,31 @@ def do_comment():
                 "WHERE commentid = ? ",
                 (flask.request.form['commentid'],)
             )
-        if target == None:
+        if target is None:
             return flask.redirect(flask.url_for('show_index'))
-        else:
-            return flask.redirect(target)
-    else:
-        return flask.redirect(flask.url_for('show_login'))
+        return flask.redirect(target)
+    return flask.redirect(flask.url_for('show_login'))
+
 
 @insta485.app.route('/posts/', methods=['POST'])
 def do_post():
+    """Do post."""
     if 'username' in flask.session:
-        loggedIn = flask.session['username']
+        logged_in = flask.session['username']
         operation = flask.request.form['operation']
         target = flask.request.args.get('target')
-        
 
         # Connect to database
         connection = insta485.model.get_db()
 
         if operation == 'create':
-            if flask.request.files['file'] == None:
+            if flask.request.files['file'] is None:
                 flask.abort(400)
 
             # Unpack flask object
-            fileobj = flask.request.files["file"]
-            filename = fileobj.filename
+            fileobj2 = flask.request.files["file"]
+            filename = fileobj2.filename
 
-            # Compute base name (filename without directory).  We use a UUID to avoid
-            # clashes with existing files, and ensure that the name is compatible with the
-            # filesystem.
             uuid_basename = "{stem}{suffix}".format(
                 stem=uuid.uuid4().hex,
                 suffix=pathlib.Path(filename).suffix
@@ -233,13 +225,13 @@ def do_post():
 
             # Save to disk
             path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
-            fileobj.save(path)
-            
+            fileobj2.save(path)
+
             # Query database for people following users user_url_slug
             cur = connection.execute(
                 "INSERT INTO posts(filename, owner) "
                 "VALUES (?, ?) ",
-                (uuid_basename, loggedIn,)
+                (uuid_basename, logged_in,)
             )
         else:
             cur = connection.execute(
@@ -248,9 +240,9 @@ def do_post():
                 "WHERE postid = ? ",
                 (flask.request.form['postid'],)
             )
-            if(cur.fetchall()[0]['owner'] != loggedIn):
+            if cur.fetchall()[0]['owner'] != logged_in:
                 flask.abort(403)
-            
+
             cur = connection.execute(
                 "SELECT filename FROM posts "
                 "WHERE postid = ? ",
@@ -266,9 +258,8 @@ def do_post():
                 "WHERE postid = ? ",
                 (flask.request.form['postid'],)
             )
-        if target == None:
-            return flask.redirect(flask.url_for('show_user', user_url_slug = loggedIn))
-        else:
-            return flask.redirect(target)
-    else:
-        return flask.redirect(flask.url_for('show_login'))
+        if target is None:
+            url = flask.url_for('show_user', user_url_slug=logged_in)
+            return flask.redirect(url)
+        return flask.redirect(target)
+    return flask.redirect(flask.url_for('show_login'))
