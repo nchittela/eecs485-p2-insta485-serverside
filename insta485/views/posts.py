@@ -11,6 +11,7 @@ import insta485
 import uuid
 import hashlib
 import pathlib
+import os
 
 import arrow
 
@@ -115,7 +116,7 @@ def show_post(postid_url_slug):
             "SELECT text, owner, commentid "
             "FROM comments "
             "WHERE postid = ? "
-            "ORDER BY commentid DESC ",
+            "ORDER BY commentid ASC ",
             (postid_url_slug,)
         )
         comments = cur.fetchall()
@@ -171,6 +172,9 @@ def do_comment():
         # Connect to database
         connection = insta485.model.get_db()
 
+        if flask.request.form == "":
+            flask.abort(400)
+
         if operation == 'create':
             # Query database for people following users user_url_slug
             cur = connection.execute(
@@ -179,6 +183,15 @@ def do_comment():
                 (loggedIn, flask.request.form['postid'], flask.request.form['text'],)
             )
         else:
+            cur = connection.execute(
+                "SELECT owner "
+                "FROM comments "
+                "WHERE commentid = ? ",
+                (flask.request.form['commentid'],)
+            )
+            if(cur.fetchall()[0]['owner'] != loggedIn):
+                flask.abort(403)
+
             cur = connection.execute(
                 "DELETE FROM comments "
                 "WHERE commentid = ? ",
@@ -203,6 +216,9 @@ def do_post():
         connection = insta485.model.get_db()
 
         if operation == 'create':
+            if flask.request.files['file'] == None:
+                flask.abort(400)
+
             # Unpack flask object
             fileobj = flask.request.files["file"]
             filename = fileobj.filename
@@ -218,21 +234,40 @@ def do_post():
             # Save to disk
             path = insta485.app.config["UPLOAD_FOLDER"]/uuid_basename
             fileobj.save(path)
-
+            
             # Query database for people following users user_url_slug
             cur = connection.execute(
                 "INSERT INTO posts(filename, owner) "
                 "VALUES (?, ?) ",
-                (filename, loggedIn,)
+                (uuid_basename, loggedIn,)
             )
         else:
+            cur = connection.execute(
+                "SELECT owner "
+                "FROM posts "
+                "WHERE postid = ? ",
+                (flask.request.form['postid'],)
+            )
+            if(cur.fetchall()[0]['owner'] != loggedIn):
+                flask.abort(403)
+            
+            cur = connection.execute(
+                "SELECT filename FROM posts "
+                "WHERE postid = ? ",
+                (flask.request.form['postid'],)
+            )
+            result = cur.fetchall()[0]['filename']
+            path = insta485.app.config["UPLOAD_FOLDER"]/result
+
+            os.remove(path)
+
             cur = connection.execute(
                 "DELETE FROM posts "
                 "WHERE postid = ? ",
                 (flask.request.form['postid'],)
             )
         if target == None:
-            return flask.redirect(flask.url_for('show_user'))
+            return flask.redirect(flask.url_for('show_user', user_url_slug = loggedIn))
         else:
             return flask.redirect(target)
     else:

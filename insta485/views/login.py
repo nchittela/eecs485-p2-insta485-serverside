@@ -71,6 +71,9 @@ def account_default_redirect():
         username = flask.request.form['username']
         password = flask.request.form['password']
 
+        if username == "" or password == "":
+            flask.abort(400)
+
         if check_password(username, password):
             flask.session['username'] = flask.request.form['username']
         else:
@@ -81,7 +84,23 @@ def account_default_redirect():
         password = flask.request.form['password']
         fullname = flask.request.form['fullname']
         email = flask.request.form['email']
-        # file = flask.request.form['file']
+        gotFile = flask.request.files['file']
+
+        if username == "" or password == "" or fullname == "" or email == "" or gotFile == "":
+            flask.abort(400)
+
+        connection = insta485.model.get_db()
+
+        # Query database for user's hashed password
+        cur = connection.execute(
+            "SELECT * "
+            "FROM users "
+            "WHERE username = ?",
+            (username,)
+        )
+        if len(cur.fetchall()) != 0:
+            flask.abort(409)
+
 
         # Unpack flask object
         fileobj = flask.request.files["file"]
@@ -124,6 +143,8 @@ def account_default_redirect():
 
         return flask.redirect(target)
     elif operation == "delete":
+        if 'username' not in flask.session:
+            flask.abort(403)
 
         # get login data from database
         # Connect to database
@@ -138,10 +159,16 @@ def account_default_redirect():
         flask.session.clear()
         return flask.redirect(target)
     elif operation == "edit_account":
+        if 'username' not in flask.session:
+            flask.abort(403)
+
         username = flask.session['username']
 
         email = flask.request.form['email']
         fullname = flask.request.form['fullname']
+
+        if email == "" or fullname == "":
+            flask.abort(400)
         
         # Unpack flask object
         fileobj = flask.request.files["file"]
@@ -178,10 +205,19 @@ def account_default_redirect():
             )
         return flask.redirect(target)
     elif operation == "update_password":
+        if 'username' not in flask.session:
+            flask.abort(403)
+        
         username = flask.session['username']
         old_password = flask.request.form['password']
         new_password1 = flask.request.form['new_password1']
         new_password2 = flask.request.form['new_password2']
+
+        if old_password == "" or new_password1 == "" or new_password2 == "":
+            flask.abort(400)
+
+        if not check_password(username, old_password):
+            flask.abort(403)
 
         if new_password1 == new_password2:
             algorithm = 'sha512'
@@ -201,6 +237,8 @@ def account_default_redirect():
                 "WHERE username = ? ",
                 (password_db_string, username,)
             )
+        else:
+            flask.abort(401)
 
         return flask.redirect(target)
     else:

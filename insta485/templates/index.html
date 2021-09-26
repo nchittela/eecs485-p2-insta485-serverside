@@ -29,15 +29,15 @@
     <div class="postCard">
         <div class="postHeader">
             <div class="user text">
-                <a href="/u/{{post.owner}}/"><img class="profilePic" src="{{post.owner_img_url}}"
+                <a href="/users/{{post.owner}}/"><img class="profilePic" src="/uploads/{{post.owner_img_url}}"
                         alt="{{post.owner}} profile pic"> </a>
-                <a href="/u/{{post.owner}}/">
+                <a href="/users/{{post.owner}}/">
                     <p> {{post.owner}} </p>
                 </a>
             </div>
-            <p class="text"><a href="/p/{{post.postid}}/"> {{post.timestamp}} </a></p>
+            <p class="text"><a href="/posts/{{post.postid}}/"> {{post.timestamp}} </a></p>
         </div>
-        <img class="postPic" src="{{post.img_url}}" alt="post image">
+        <img class="postPic" src="/uploads/{{post.filename}}" alt="post image">
 
         {% if post.likes == 1 %}
             <p class="text">{{post.likes}} like </p>
@@ -46,8 +46,30 @@
         {% endif %}
 
         {% for comment in post.comments %}
-            <p class="text"> <b><a href="/u/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
+            <p class="text"> <b><a href="/users/{{comment.owner}}/">{{comment.owner}}</a></b> {{comment.text}}</p>
         {% endfor %}
+
+        {% if post.liked %}
+            <form action="/likes/?target={{url_for('show_index')}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="unlike"/>
+                <input type="hidden" name="postid" value="{{post.postid}}"/>
+                <input type="submit" name="unlike" value="unlike"/>
+            </form>
+        {% else %}
+            <form action="/likes/?target={{url_for('show_index')}}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="operation" value="like"/>
+                <input type="hidden" name="postid" value="{{post.postid}}"/>
+                <input type="submit" name="like" value="like"/>
+            </form>
+        {% endif%}
+
+        <form action="/comments/?target={{url_for('show_index')}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="create"/>
+            <input type="hidden" name="postid" value="{{post.postid}}"/>
+            <input type="text" name="text" required/>
+            <input type="submit" name="comment" value="comment"/>
+        </form>
+
     </div>
     {% endfor %}
 

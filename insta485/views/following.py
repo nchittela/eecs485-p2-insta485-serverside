@@ -16,6 +16,15 @@ def show_following(user_url_slug):
         # Connect to database
         connection = insta485.model.get_db()
 
+        cur = connection.execute(
+            "SELECT fullname "
+            "FROM users "
+            "WHERE username = ?",
+            (user_url_slug,)
+        )
+        if len(cur.fetchall()) == 0:
+            flask.abort(404)
+
         # Query database for users user_url_slug is following
         cur = connection.execute(
             "SELECT username2 "
@@ -66,6 +75,15 @@ def show_followers(user_url_slug):
         loggedIn = flask.session['username']
         # Connect to database
         connection = insta485.model.get_db()
+
+        cur = connection.execute(
+            "SELECT fullname "
+            "FROM users "
+            "WHERE username = ?",
+            (user_url_slug,)
+        )
+        if len(cur.fetchall()) == 0:
+            flask.abort(404)
 
         # Query database for people following users user_url_slug
         cur = connection.execute(
@@ -119,6 +137,15 @@ def handle_following():
         if flask.request.form['operation'] == 'unfollow':
             connection = insta485.model.get_db()
             cur = connection.execute(
+                "SELECT created "
+                "FROM following "
+                "WHERE username1 = ? AND username2 = ? ",
+                (flask.session['username'], flask.request.form['username'],)
+            )
+            if(len(cur.fetchall())) == 0:
+                flask.abort(409)
+
+            cur = connection.execute(
                 "DELETE FROM following "
                 "WHERE username1 = ? AND username2 = ?",
                 (flask.session['username'], flask.request.form['username'],)
@@ -127,6 +154,16 @@ def handle_following():
             return flask.redirect(target)
         else:
             connection = insta485.model.get_db()
+
+            cur = connection.execute(
+                "SELECT created "
+                "FROM following "
+                "WHERE username1 = ? AND username2 = ? ",
+                (flask.session['username'], flask.request.form['username'],)
+            )
+            if(len(cur.fetchall())) != 0:
+                flask.abort(409)
+            
             cur = connection.execute(
                 "INSERT INTO following (username1, username2) VALUES(?, ?)",
                 (flask.session['username'], flask.request.form['username'])

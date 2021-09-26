@@ -10,5 +10,6 @@ import insta485
 
 @insta485.app.route('/accounts/logout/', methods=['POST'])
 def logout():
-  flask.session.clear()
-  return flask.redirect(flask.url_for('show_login'))
+    """Logout stuff"""
+    flask.session.clear()
+    return flask.redirect(flask.url_for('show_login'))
